@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #16a34a;   /* Green */
+  --color-secondary: #d4af37; /* Gold */
+}
+
+/* Light mode (default) */
+
+:root {
+  /* Brand colors */
+  --color-primary: #16a34a;      /* Green */
+  --color-primary-dark: #15803d;
+  --color-secondary: #d4af37;    /* Gold */
+  --color-secondary-dark: #b8962e;
+
+  /* Background layers */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+
+  /* Text */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+
+  /* UI elements */
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+
+  /* Navbar */
+  --navbar-bg: #16a34a;
+  --navbar-text: #ffffff;
+
+  /* Accent elements (gold used here) */
+  --accent: #d4af37;
+  --accent-soft: #f5e6a3;
+}
+
+.dark {
+  /* Brand */
+  --color-primary: #22c55e;
+  --color-primary-dark: #16a34a;
+  --color-secondary: #e6c65c;
+  --color-secondary-dark: #c4a63f;
+
+  /* Background layers */
+  --bg-primary: #0f172a;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1f2937;
+
+  /* Text */
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+
+  /* UI */
+  --border-color: #374151;
+  --card-bg: #1f2937;
+
+  /* Navbar */
+  --navbar-bg: #14532d;
+  --navbar-text: #f9fafb;
+
+  /* Accent */
+  --accent: #e6c65c;
+  --accent-soft: #5b4a13;
+}
