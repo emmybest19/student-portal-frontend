@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { containerVariants, itemVariants, textVariants } from '../utils/animations'
-import api from '../services/api.js'
 
 const profileImageVariants = {
   hidden: { opacity: 0, scale: 0.8 },
@@ -26,34 +25,14 @@ function StudentProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [profilePhoto, setProfilePhoto] = useState(null)
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    matric: '',
-    level: '',
-    phone: '',
-    address: '',
-    department: '',
+    fullName: 'Fatima Bello',
+    email: 'fatima.bello@university.edu',
+    matric: 'CVE/19/055',
+    level: '300',
+    phone: '+234 123 456 7890',
+    address: 'Lagos, Nigeria',
+    department: 'Civil Engineering',
   })
-
-  useEffect(() => {
-    api.get('/student/profile')
-      .then((res) => {
-        const data = res.data
-        setFormData({
-          fullName: data.fullName || '',
-          email: data.email || '',
-          matric: data.matricNumber || '',
-          level: data.level || '',
-          phone: data.phone || '',
-          address: data.address || '',
-          department: data.department || '',
-        })
-        if (data.profilePhoto) {
-          setProfilePhoto(data.profilePhoto)
-        }
-      })
-      .catch((err) => console.error('Failed to fetch profile:', err))
-  }, [])
 
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0]
@@ -75,18 +54,9 @@ function StudentProfilePage() {
   }
 
   const handleSave = () => {
-    api.put('/student/profile', {
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address,
-      profilePhoto,
-    })
-      .then((res) => {
-        setUser({ ...user, ...formData })
-        setIsEditing(false)
-      })
-      .catch((err) => console.error('Failed to save profile:', err))
+    // Update user info
+    setUser({ ...user, ...formData })
+    setIsEditing(false)
   }
 
   const handleCancel = () => {

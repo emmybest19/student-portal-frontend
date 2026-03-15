@@ -1,22 +1,35 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import api from '../services/api.js'
 
 function AdminAchievementsPage() {
-  const [achievements, setAchievements] = useState([])
+  const INITIAL_ACHIEVEMENTS = [
+    {
+      id: 1,
+      title: 'Best Engineering Department 2025',
+      year: 2025,
+      category: 'Academic',
+      description: 'Recognition for excellence in engineering education',
+      icon: '🏆',
+    },
+    {
+      id: 2,
+      title: 'Concrete Canoe Competition 2nd Place',
+      year: 2024,
+      category: 'Competition',
+      description: 'Second place finish in national concrete canoe competition',
+      icon: '🚣',
+    },
+    {
+      id: 3,
+      title: 'Research Excellence Award',
+      year: 2025,
+      category: 'Research',
+      description: 'Outstanding research contributions to civil engineering',
+      icon: '🔬',
+    },
+  ]
 
-  const fetchAchievements = async () => {
-    try {
-      const res = await api.get('/admin/achievements')
-      setAchievements(res.data.map((a) => ({ ...a, id: a._id })))
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
-    }
-  }
-
-  useEffect(() => {
-    fetchAchievements()
-  }, [])
+  const [achievements, setAchievements] = useState(INITIAL_ACHIEVEMENTS)
   const [showModal, setShowModal] = useState(false)
   const [selectedAchievement, setSelectedAchievement] = useState(null)
   const [filterCategory, setFilterCategory] = useState('all')
@@ -70,29 +83,31 @@ function AdminAchievementsPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      if (selectedAchievement) {
-        await api.put('/admin/achievements/' + selectedAchievement.id, formData)
-      } else {
-        await api.post('/admin/achievements', formData)
+    // Backend integration point - replace this with API call
+    if (selectedAchievement) {
+      // UPDATE operation
+      setAchievements(
+        achievements.map((a) =>
+          a.id === selectedAchievement.id ? { ...a, ...formData } : a
+        )
+      )
+    } else {
+      // CREATE operation
+      const newAchievement = {
+        id: Date.now(),
+        ...formData,
       }
-      await fetchAchievements()
-      handleCloseModal()
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
+      setAchievements([newAchievement, ...achievements])
     }
+    handleCloseModal()
   }
 
-  const handleDeleteAchievement = async (id) => {
+  const handleDeleteAchievement = (id) => {
+    // Backend integration point - replace this with API call
     if (window.confirm('Are you sure you want to delete this achievement?')) {
-      try {
-        await api.delete('/admin/achievements/' + id)
-        await fetchAchievements()
-      } catch (err) {
-        alert(err.response?.data?.message || 'Something went wrong')
-      }
+      setAchievements(achievements.filter((a) => a.id !== id))
     }
   }
 

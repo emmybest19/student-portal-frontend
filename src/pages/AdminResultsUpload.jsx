@@ -1,21 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "../services/api.js";
 
 function AdminResultsUploadPage() {
-  const [students, setStudents] = useState([]);
-
-  useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const res = await api.get('/admin/results/students');
-        setStudents(res.data.map((s) => ({ id: s._id, name: s.fullName, matric: s.matricNumber, level: s.level })));
-      } catch (err) {
-        alert(err.response?.data?.message || 'Something went wrong');
-      }
-    };
-    fetchStudents();
-  }, []);
+  const STUDENTS = [
+    { id: 1, name: "Adaeze Nwachukwu", matric: "CVE/21/001", level: "300" },
+    { id: 2, name: "John Ibrahim", matric: "CVE/20/104", level: "400" },
+    { id: 3, name: "Chioma Okafor", matric: "CVE/22/045", level: "200" },
+    { id: 4, name: "Emeka Nwosu", matric: "CVE/21/055", level: "300" },
+    { id: 5, name: "Zainab Mohammed", matric: "CVE/22/078", level: "200" },
+    { id: 6, name: "Samuel Okoro", matric: "CVE/20/089", level: "400" },
+    { id: 7, name: "Grace Okafor", matric: "CVE/21/023", level: "300" },
+    { id: 8, name: "Michael Chukwu", matric: "CVE/22/034", level: "200" },
+  ];
 
   const SEMESTERS = ["1", "2"];
 
@@ -34,7 +30,7 @@ function AdminResultsUploadPage() {
   const [courses, setCourses] = useState({});
   const [uploadMessage, setUploadMessage] = useState("");
 
-  const filteredStudents = students.filter((student) => {
+  const filteredStudents = STUDENTS.filter((student) => {
     const matchesSearch =
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       student.matric.toLowerCase().includes(searchQuery.toLowerCase());
@@ -45,7 +41,7 @@ function AdminResultsUploadPage() {
   });
 
   const currentStudent = selectedStudent
-    ? students.find((s) => s.id === selectedStudent)
+    ? STUDENTS.find((s) => s.id === selectedStudent)
     : null;
 
   const getStudentSemesterKey = () => {
@@ -134,38 +130,29 @@ function AdminResultsUploadPage() {
     }));
   };
 
-  const handleSubmitAllCourses = async () => {
+  const handleSubmitAllCourses = () => {
     if (!currentStudent || studentCourses.length === 0) {
       alert("Add at least one course");
       return;
     }
 
-    try {
-      await api.post('/admin/results/upload', {
-        studentId: currentStudent.id,
-        level: currentStudent.level,
-        semester: selectedSemester,
-        courses: studentCourses.map((c) => ({
-          courseCode: c.courseCode,
-          courseName: c.courseTitle,
-          creditLoad: 3,
-          caScore: c.caScore,
-          examScore: c.examScore,
-        })),
-      });
+    const dataToSubmit = {
+      studentMatric: currentStudent.matric,
+      semester: selectedSemester,
+      courses: studentCourses,
+    };
 
-      setUploadMessage("Courses submitted successfully");
+    console.log("Send to backend:", dataToSubmit);
 
-      setTimeout(() => {
-        setUploadMessage("");
-        setSelectedStudent(null);
-        setCourses({});
-        setSearchQuery("");
-        setFilterLevel("all");
-      }, 2000);
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong');
-    }
+    setUploadMessage("Courses submitted successfully");
+
+    setTimeout(() => {
+      setUploadMessage("");
+      setSelectedStudent(null);
+      setCourses({});
+      setSearchQuery("");
+      setFilterLevel("all");
+    }, 2000);
   };
 
   const containerVariants = {
@@ -193,7 +180,10 @@ function AdminResultsUploadPage() {
       </motion.div>
 
       {uploadMessage && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
           className="p-4 rounded-lg"
           style={{
             backgroundColor: "rgba(34, 197, 94, 0.1)",
@@ -201,69 +191,109 @@ function AdminResultsUploadPage() {
           }}
         >
           {uploadMessage}
-        </div>
+        </motion.div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
         <input
           type="text"
           placeholder="Search student"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border p-2 rounded"
+          style={{
+            backgroundColor: 'var(--card-bg)',
+            borderColor: 'var(--border-color)',
+            color: 'var(--text-primary)',
+          }}
+          className="border p-2 rounded transition-colors duration-200"
         />
 
         <select
           value={filterLevel}
           onChange={(e) => setFilterLevel(e.target.value)}
-          className="border p-2 rounded "
+          style={{
+            backgroundColor: 'var(--card-bg)',
+            borderColor: 'var(--border-color)',
+            color: 'var(--text-primary)',
+          }}
+          className="border p-2 rounded transition-colors duration-200"
         >
-          <option value="all" className="text-black">All Levels</option>
-          <option value="200" className="text-black">200</option>
-          <option value="300" className="text-black">300</option>
-          <option value="400" className="text-black">400</option>
+          <option value="all">All Levels</option>
+          <option value="200">200</option>
+          <option value="300">300</option>
+          <option value="400">400</option>
         </select>
-      </div>
+      </motion.div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <motion.div variants={containerVariants} className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
         {filteredStudents.map((student) => (
-          <div
+          <motion.div
             key={student.id}
             onClick={() => handleSelectStudent(student.id)}
-            className="border rounded p-4 cursor-pointer"
+            variants={itemVariants}
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              backgroundColor: 'var(--card-bg)',
+              borderColor: selectedStudent === student.id ? 'var(--color-primary)' : 'var(--border-color)',
+              borderWidth: '2px',
+            }}
+            className="rounded p-4 cursor-pointer transition-colors duration-200"
           >
-            <p className="font-bold">{student.name}</p>
-            <p className="text-sm">{student.matric}</p>
-            <p className="text-sm">Level {student.level}</p>
-          </div>
+            <p className="font-bold" style={{ color: 'var(--text-primary)' }}>{student.name}</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{student.matric}</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Level {student.level}</p>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {currentStudent && (
-        <div className="border rounded p-6 space-y-4">
-          <h2 className="font-bold">{currentStudent.name}</h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            backgroundColor: 'var(--card-bg)',
+            borderColor: 'var(--border-color)',
+          }}
+          className="border rounded p-6 space-y-4"
+        >
+          <h2 className="font-bold" style={{ color: 'var(--text-primary)' }}>{currentStudent.name}</h2>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleOpenScoreModal}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="text-white px-4 py-2 rounded transition-colors duration-200"
+            style={{ backgroundColor: 'var(--color-primary)' }}
           >
             Add Course
-          </button>
+          </motion.button>
 
           {studentCourses.map((course) => (
-            <div
+            <motion.div
               key={course.id}
-              className="flex justify-between border p-2 rounded"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              whileHover={{ x: 5 }}
+              style={{
+                backgroundColor: 'var(--bg-secondary)',
+                borderColor: 'var(--border-color)',
+              }}
+              className="flex justify-between border p-2 rounded transition-colors duration-200"
             >
-              <span>{course.courseCode}</span>
-              <span>{course.total}</span>
-              <button
+              <span style={{ color: 'var(--text-primary)' }}>{course.courseCode}</span>
+              <span style={{ color: 'var(--text-primary)' }}>{course.total}</span>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => handleRemoveCourse(course.id)}
-                className="text-red-600"
+                style={{ color: 'var(--error)' }}
               >
                 Remove
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           ))}
 
           <button
@@ -272,7 +302,7 @@ function AdminResultsUploadPage() {
           >
             Submit Courses
           </button>
-        </div>
+        </motion.div>
       )}
 
       <AnimatePresence>

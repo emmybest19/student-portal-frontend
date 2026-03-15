@@ -1,30 +1,36 @@
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Card from '../components/Card.jsx'
 import Modal from '../components/Modal.jsx'
 import Button from '../components/Button.jsx'
-import api from '../services/api.js'
 import { containerVariants, itemVariants, textVariants } from '../utils/animations'
+
+const MOCK_LECTURERS = [
+  {
+    id: 1,
+    name: 'Dr. Grace Okafor',
+    position: 'Senior Lecturer',
+    image: '',
+    biography:
+      'Dr. Okafor specializes in structural engineering with over 10 years of teaching experience.',
+    qualifications: 'PhD Civil Engineering (Structures)',
+    specialization: 'Structural Analysis, Reinforced Concrete Design',
+    contact: 'grace.okafor@university.edu',
+  },
+  {
+    id: 2,
+    name: 'Engr. Tunde Ali',
+    position: 'Lecturer I',
+    image: '',
+    biography: 'Focuses on highway and transportation engineering.',
+    qualifications: 'MSc Transportation Engineering',
+    specialization: 'Highway Design, Traffic Engineering',
+    contact: 'tunde.ali@university.edu',
+  },
+]
 
 function LecturerDirectoryPage() {
   const [selected, setSelected] = useState(null)
-  const [lecturers, setLecturers] = useState([])
-
-  useEffect(() => {
-    api.get('/public/lecturers').then((res) => {
-      const mapped = res.data.map((l) => ({
-        id: l._id,
-        name: l.fullName,
-        position: l.position,
-        image: '',
-        biography: l.biography,
-        qualifications: l.qualifications,
-        specialization: l.specialization,
-        contact: l.email,
-      }))
-      setLecturers(mapped)
-    })
-  }, [])
 
   return (
     <motion.div
@@ -60,7 +66,7 @@ function LecturerDirectoryPage() {
         whileInView="visible"
         viewport={{ once: true }}
       >
-        {lecturers.map((lecturer) => (
+        {MOCK_LECTURERS.map((lecturer) => (
           <motion.div key={lecturer.id} variants={itemVariants}>
             <Card animate={true} className="overflow-hidden">
               <div className="h-28 bg-primary/5" />

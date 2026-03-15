@@ -3,21 +3,21 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const slides = [
   {
-    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12",
+    image: "/img1.jpg",
     text: "Building the future through innovative civil engineering."
   },
   {
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e",
+    image: "/img2.jpg",
     text: "Training engineers to design resilient infrastructure."
   },
   {
-    image: "https://images.unsplash.com/photo-1590650153855-d9e808231d41",
+    image: "/img3.jpg",
     text: "Bridging theory and practice in structural design."
   },
-  {
-    image: "https://images.unsplash.com/photo-1513828583688-c52646db42da",
-    text: "Shaping sustainable cities and transportation systems."
-  }
+  // {
+  //   image: "https://images.unsplash.com/photo-1513828583688-c52646db42da",
+  //   text: "Shaping sustainable cities and transportation systems."
+  // }
 ];
 
 const slideVariants = {

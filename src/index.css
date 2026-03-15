@@ -34,6 +34,17 @@
   /* Accent elements (gold used here) */
   --accent: #d4af37;
   --accent-soft: #f5e6a3;
+
+  /* Additional UI Colors */
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #eab308;
+  --info: #3b82f6;
+
+  /* Gradient backgrounds */
+  --bg-gradient-light: linear-gradient(135deg, #16a34a 0%, #d4af37 100%);
+  --bg-gradient-secondary: linear-gradient(to right, #f0fdf4, #fef3c7);
+  --bg-subtle: #f9fafb;
 }
 
 .dark {
@@ -63,4 +74,15 @@
   /* Accent */
   --accent: #e6c65c;
   --accent-soft: #5b4a13;
+
+  /* Additional UI Colors */
+  --success: #22c55e;
+  --error: #f87171;
+  --warning: #fbbf24;
+  --info: #60a5fa;
+
+  /* Gradient backgrounds */
+  --bg-gradient-light: linear-gradient(135deg, #22c55e 0%, #e6c65c 100%);
+  --bg-gradient-secondary: linear-gradient(to right, #064e3b, #5b4a13);
+  --bg-subtle: #1f2937;
 }

@@ -1,22 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import api from '../services/api.js'
 
 function AdminWorksPage() {
-  const [works, setWorks] = useState([])
+  const INITIAL_WORKS = [
+    {
+      id: 1,
+      title: 'Final year project: Bridge design',
+      description: 'Design and analysis of a steel pedestrian bridge structure',
+      owner: '400 level students',
+      deadline: '2026-04-30',
+      status: 'active',
+      category: 'Project',
+      submissions: 18,
+    },
+    {
+      id: 2,
+      title: 'Soil Mechanics Assignment',
+      description: 'Determination of soil properties and classification',
+      owner: '200 level students',
+      deadline: '2026-03-25',
+      status: 'active',
+      category: 'Assignment',
+      submissions: 45,
+    },
+  ]
 
-  const fetchWorks = async () => {
-    try {
-      const res = await api.get('/admin/works')
-      setWorks(res.data.map((w) => ({ ...w, id: w._id })))
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
-    }
-  }
-
-  useEffect(() => {
-    fetchWorks()
-  }, [])
+  const [works, setWorks] = useState(INITIAL_WORKS)
   const [showModal, setShowModal] = useState(false)
   const [selectedWork, setSelectedWork] = useState(null)
   const [filterStatus, setFilterStatus] = useState('all')
@@ -67,29 +76,34 @@ function AdminWorksPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      if (selectedWork) {
-        await api.put('/admin/works/' + selectedWork.id, formData)
-      } else {
-        await api.post('/admin/works', formData)
+    // Backend integration point - replace this with API call
+    if (selectedWork) {
+      // UPDATE operation
+      setWorks(
+        works.map((w) =>
+          w.id === selectedWork.id
+            ? { ...w, ...formData, submissions: w.submissions }
+            : w
+        )
+      )
+    } else {
+      // CREATE operation
+      const newWork = {
+        id: Date.now(),
+        ...formData,
+        submissions: 0,
       }
-      await fetchWorks()
-      handleCloseModal()
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
+      setWorks([newWork, ...works])
     }
+    handleCloseModal()
   }
 
-  const handleDeleteWork = async (id) => {
+  const handleDeleteWork = (id) => {
+    // Backend integration point - replace this with API call
     if (window.confirm('Are you sure you want to delete this assignment?')) {
-      try {
-        await api.delete('/admin/works/' + id)
-        await fetchWorks()
-      } catch (err) {
-        alert(err.response?.data?.message || 'Something went wrong')
-      }
+      setWorks(works.filter((w) => w.id !== id))
     }
   }
 

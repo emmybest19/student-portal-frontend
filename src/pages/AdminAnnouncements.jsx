@@ -1,26 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import api from '../services/api.js'
 
 function AdminAnnouncementsPage() {
-  const [announcements, setAnnouncements] = useState([])
+  const INITIAL_ANNOUNCEMENTS = [
+    {
+      id: 1,
+      title: 'Exam timetable',
+      body: 'Final exam timetable will be released soon.',
+      priority: 'high',
+      category: 'Academic',
+      createdDate: '2026-03-10',
+      status: 'published',
+    },
+    {
+      id: 2,
+      title: 'Campus Maintenance',
+      body: 'The campus will undergo scheduled maintenance during the weekend.',
+      priority: 'medium',
+      category: 'Campus',
+      createdDate: '2026-03-08',
+      status: 'published',
+    },
+  ]
 
-  const fetchAnnouncements = async () => {
-    try {
-      const res = await api.get('/admin/announcements')
-      setAnnouncements(res.data.map((a) => ({
-        ...a,
-        id: a._id,
-        createdDate: a.createdAt ? new Date(a.createdAt).toISOString().split('T')[0] : '',
-      })))
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
-    }
-  }
-
-  useEffect(() => {
-    fetchAnnouncements()
-  }, [])
+  const [announcements, setAnnouncements] = useState(INITIAL_ANNOUNCEMENTS)
   const [showModal, setShowModal] = useState(false)
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null)
   const [filter, setFilter] = useState('all')
@@ -70,29 +73,34 @@ function AdminAnnouncementsPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      if (selectedAnnouncement) {
-        await api.put('/admin/announcements/' + selectedAnnouncement.id, formData)
-      } else {
-        await api.post('/admin/announcements', formData)
+    // Backend integration point - replace this with API call
+    if (selectedAnnouncement) {
+      // UPDATE operation
+      setAnnouncements(
+        announcements.map((a) =>
+          a.id === selectedAnnouncement.id
+            ? { ...a, ...formData }
+            : a
+        )
+      )
+    } else {
+      // CREATE operation
+      const newAnnouncement = {
+        id: Date.now(),
+        ...formData,
+        createdDate: new Date().toISOString().split('T')[0],
       }
-      await fetchAnnouncements()
-      handleCloseModal()
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
+      setAnnouncements([newAnnouncement, ...announcements])
     }
+    handleCloseModal()
   }
 
-  const handleDeleteAnnouncement = async (id) => {
+  const handleDeleteAnnouncement = (id) => {
+    // Backend integration point - replace this with API call
     if (window.confirm('Are you sure you want to delete this announcement?')) {
-      try {
-        await api.delete('/admin/announcements/' + id)
-        await fetchAnnouncements()
-      } catch (err) {
-        alert(err.response?.data?.message || 'Something went wrong')
-      }
+      setAnnouncements(announcements.filter((a) => a.id !== id))
     }
   }
 

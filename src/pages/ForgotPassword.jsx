@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import api from '../services/api.js'
 import AuthLayout from '../layouts/AuthLayout.jsx'
 
 const inputVariants = {
@@ -25,6 +24,7 @@ function ForgotPasswordPage() {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [foundUser, setFoundUser] = useState(null)
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value)
@@ -58,10 +58,25 @@ function ForgotPasswordPage() {
     setIsLoading(true)
 
     try {
-      await api.post('/auth/forgot-password', { email })
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Get users from localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]')
+
+      // Find user by email
+      const user = users.find((u) => u.email === email)
+
+      if (!user) {
+        setError('Email not found. Please register first.')
+        setIsLoading(false)
+        return
+      }
+
+      setFoundUser(user)
       setStep(2)
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred')
+      setError(err.message || 'An error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -94,15 +109,29 @@ function ForgotPasswordPage() {
     setIsLoading(true)
 
     try {
-      await api.post('/auth/reset-password', { email, newPassword })
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      setSuccessMessage('✅ Password reset successful! Redirecting to login...')
+      // Get users from localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]')
 
-      setTimeout(() => {
-        navigate('/login')
-      }, 2000)
+      // Find and update user
+      const userIndex = users.findIndex((u) => u.email === email)
+
+      if (userIndex !== -1) {
+        users[userIndex].password = newPassword
+        localStorage.setItem('users', JSON.stringify(users))
+
+        setSuccessMessage('✅ Password reset successful! Redirecting to login...')
+
+        setTimeout(() => {
+          navigate('/login')
+        }, 2000)
+      } else {
+        setError('User not found')
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred')
+      setError(err.message || 'An error occurred')
     } finally {
       setIsLoading(false)
     }

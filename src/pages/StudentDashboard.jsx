@@ -1,23 +1,14 @@
-import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { motion } from 'framer-motion'
-import api from '../services/api.js'
 
 function StudentDashboardPage() {
   const { user } = useAuth()
-  const [dashboardData, setDashboardData] = useState(null)
 
-  useEffect(() => {
-    api.get('/student/dashboard')
-      .then((res) => setDashboardData(res.data))
-      .catch((err) => console.error('Failed to fetch dashboard data:', err))
-  }, [])
-
-  // Static data for achievements and deadlines (no backend endpoint)
+  // Mock data for student achievements and statistics
   const studentData = {
-    totalCreditsEarned: dashboardData?.totalCreditsEarned || 0,
-    totalCreditsRequired: dashboardData?.totalCreditsRequired || 120,
-    attendanceRate: dashboardData?.attendanceRate || 0,
+    totalCreditsEarned: 45,
+    totalCreditsRequired: 120,
+    attendanceRate: 92,
     academicHonors: ['Dean\'s List (Semester 2)', 'Excellence in Mathematics'],
     upcomingDeadlines: [
       { title: 'Exam Registration', date: 'Mar 20, 2026' },
@@ -89,30 +80,47 @@ function StudentDashboardPage() {
       <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-4">
         {[
           { label: 'Current Level', value: user?.level || '300', icon: '📊' },
-          { label: 'CGPA', value: dashboardData?.cgpa || '0.00', icon: '⭐', highlight: true },
+          { label: 'CGPA', value: '3.87', icon: '⭐', highlight: true },
           { label: 'Credits Completed', value: `${studentData.totalCreditsEarned}/${studentData.totalCreditsRequired}`, icon: '📚' },
           { label: 'Attendance', value: `${studentData.attendanceRate}%`, icon: '✅' },
         ].map((stat, idx) => (
           <motion.div
             key={idx}
-            whileHover={{ scale: 1.05, y: -5 }}
+            whileHover={{ scale: 1.08, y: -8 }}
+            whileTap={{ scale: 0.95 }}
             style={{
               backgroundColor: 'var(--card-bg)',
               borderColor: stat.highlight ? 'var(--color-primary)' : 'var(--border-color)',
               borderWidth: stat.highlight ? '2px' : '1px',
             }}
-            className="rounded-lg p-4 transition-all duration-200"
+            className="rounded-lg p-4 transition-all duration-200 cursor-pointer"
           >
             <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>
+              <div className="flex-1">
+                <motion.p
+                  className="text-xs font-medium uppercase tracking-wide"
+                  style={{ color: 'var(--text-secondary)' }}
+                  whileHover={{ color: 'var(--color-primary)' }}
+                  transition={{ duration: 0.2 }}
+                >
                   {stat.label}
-                </p>
-                <p className="mt-2 text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                </motion.p>
+                <motion.p
+                  className="mt-2 text-3xl font-bold"
+                  style={{ color: 'var(--text-primary)' }}
+                  whileHover={{ scale: 1.15 }}
+                  transition={{ duration: 0.2 }}
+                >
                   {stat.value}
-                </p>
+                </motion.p>
               </div>
-              <span className="text-2xl">{stat.icon}</span>
+              <motion.span
+                className="text-2xl"
+                whileHover={{ scale: 1.3, rotate: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {stat.icon}
+              </motion.span>
             </div>
           </motion.div>
         ))}
@@ -159,7 +167,7 @@ function StudentDashboardPage() {
                 Registered Courses
               </p>
               <p className="mt-1 text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {dashboardData?.registeredCourses || 0}
+                10
               </p>
             </div>
             <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--bg-secondary)' }}>
@@ -167,7 +175,7 @@ function StudentDashboardPage() {
                 Completed Courses
               </p>
               <p className="mt-1 text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {dashboardData?.completedCourses || 0}
+                15
               </p>
             </div>
             <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--bg-secondary)' }}>
@@ -175,7 +183,7 @@ function StudentDashboardPage() {
                 Remaining Courses
               </p>
               <p className="mt-1 text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                {dashboardData?.remainingCourses || 0}
+                18
               </p>
             </div>
           </div>

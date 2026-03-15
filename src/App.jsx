@@ -20,6 +20,8 @@ import AdminResultsUploadPage from './pages/AdminResultsUpload.jsx'
 import AdminAnnouncementsPage from './pages/AdminAnnouncements.jsx'
 import AdminAchievementsPage from './pages/AdminAchievements.jsx'
 import AdminWorksPage from './pages/AdminWorks.jsx'
+import ComingSoon from './pages/ComingSoon.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 function App() {
   return (
@@ -69,6 +71,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/coming-soon" element={<ComingSoon />} />
 
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentDashboardPage />} />
@@ -85,6 +88,8 @@ function App() {
           <Route path="achievements" element={<AdminAchievementsPage />} />
           <Route path="works" element={<AdminWorksPage />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

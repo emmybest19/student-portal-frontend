@@ -10,20 +10,46 @@ function Modal({ open, title, children, onClose }) {
       aria-modal="true"
       aria-label={title}
     >
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3">
-          <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
+      <div
+        className="w-full max-w-lg rounded-2xl shadow-xl"
+        style={{
+          backgroundColor: 'var(--card-bg)',
+          borderColor: 'var(--border-color)',
+        }}
+      >
+        <div
+          className="flex items-center justify-between border-b px-5 py-3"
+          style={{
+            borderColor: 'var(--border-color)',
+          }}
+        >
+          <h2
+            className="text-sm font-semibold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1 text-gray-500 hover:bg-gray-100"
+            className="rounded-full p-1 transition-colors"
+            style={{
+              color: 'var(--text-secondary)',
+            }}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = 'var(--bg-secondary)')}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = 'transparent')}
             aria-label="Close"
           >
             ×
           </button>
         </div>
         <div className="px-5 py-4">{children}</div>
-        <div className="flex justify-end gap-3 border-t border-gray-100 px-5 py-3">
+        <div
+          className="flex justify-end gap-3 border-t px-5 py-3"
+          style={{
+            borderColor: 'var(--border-color)',
+          }}
+        >
           <Button variant="ghost" type="button" onClick={onClose}>
             Close
           </Button>

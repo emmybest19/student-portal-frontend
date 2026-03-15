@@ -64,7 +64,12 @@ function DashboardLayout({ links, title, children, onLogout }) {
             {/* Mobile Menu Button */}
             <motion.button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="md:hidden p-2 rounded-lg transition-colors"
+              style={{
+                color: 'var(--text-primary)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-secondary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               title="Toggle menu"

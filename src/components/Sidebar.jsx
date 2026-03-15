@@ -31,7 +31,7 @@ function Sidebar({ links, onLogout, onNavigate }) {
   return (
     <motion.aside
       style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)', color: 'var(--text-primary)' }}
-      className="w-64 shrink-0 border-r backdrop-blur transition-colors duration-200 flex flex-col h-screen md:h-auto"
+      className="w-64 shrink-0 border-r backdrop-blur transition-colors duration-200 flex flex-col h-screen"
       variants={sidebarVariants}
       initial="hidden"
       animate="visible"

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import DashboardLayout from './DashboardLayout.jsx'
@@ -20,14 +19,8 @@ const titlesByPath = {
 function StudentLayout() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { logout, user } = useAuth()
+  const { logout } = useAuth()
   const title = titlesByPath[location.pathname] || 'Student'
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login')
-    }
-  }, [user, navigate])
 
   const handleLogout = () => {
     logout()

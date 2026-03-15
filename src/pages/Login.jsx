@@ -2,7 +2,6 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
-import api from '../services/api.js'
 import AuthLayout from '../layouts/AuthLayout.jsx'
 
 const inputVariants = {
@@ -19,7 +18,7 @@ const inputVariants = {
 
 function LoginPage() {
   const navigate = useNavigate()
-  const { login, user } = useAuth()
+  const { setUser, user } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -87,30 +86,60 @@ function LoginPage() {
     setIsLoading(true)
 
     try {
-      const { data } = await api.post('/auth/login', {
-        email: formData.email,
-        password: formData.password,
-      })
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      // Handle remember me
+      // Get users from localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]')
+      
+      // Find user by email
+      const foundUser = users.find((user) => user.email === formData.email)
+
+      if (!foundUser) {
+        setError('Email not found. Please register first.')
+        setIsLoading(false)
+        return
+      }
+
+      // Verify password
+      if (foundUser.password !== formData.password) {
+        setError('Invalid password. Please try again.')
+        setIsLoading(false)
+        return
+      }
+
+      // Password is correct - login successful
+      // Save remembered email if checked
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', formData.email)
       } else {
         localStorage.removeItem('rememberedEmail')
       }
 
+      // Create session user object (without password)
+      const sessionUser = {
+        id: foundUser.id,
+        fullName: foundUser.fullName,
+        email: foundUser.email,
+        matricNumber: foundUser.matricNumber,
+        level: foundUser.level,
+      }
+
+      // Save current session to localStorage
+      localStorage.setItem('currentUser', JSON.stringify(sessionUser))
+
       // Set user in AuthContext
-      login(data.user, data.token)
+      setUser(sessionUser)
 
       // Show success message
       setSuccessMessage('✅ Login successful! Redirecting...')
 
-      // Redirect based on role
+      // Redirect to student dashboard after 1 second
       setTimeout(() => {
-        navigate(data.user.role === 'admin' ? '/admin/lecturers' : '/student')
+        navigate('/student')
       }, 1000)
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during login')
+      setError(err.message || 'An error occurred during login')
     } finally {
       setIsLoading(false)
     }

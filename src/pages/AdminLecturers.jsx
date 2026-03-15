@@ -1,22 +1,44 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import api from '../services/api.js'
 
 function AdminLecturersPage() {
-  const [lecturers, setLecturers] = useState([])
+  const INITIAL_LECTURERS = [
+    {
+      id: 1,
+      fullName: 'Dr. Grace Okafor',
+      position: 'Senior Lecturer',
+      email: 'grace.okafor@edu',
+      phone: '+234 801 111 2222',
+      specialization: 'Structural Engineering',
+      officeLocation: 'Engineering Block, Room 305',
+      status: 'active',
+      yearsOfExperience: 12,
+    },
+    {
+      id: 2,
+      fullName: 'Engr. Tunde Ali',
+      position: 'Lecturer I',
+      email: 'tunde.ali@edu',
+      phone: '+234 802 222 3333',
+      specialization: 'Transportation Engineering',
+      officeLocation: 'Engineering Block, Room 210',
+      status: 'active',
+      yearsOfExperience: 8,
+    },
+    {
+      id: 3,
+      fullName: 'Prof. Chisom Nkoli',
+      position: 'Professor',
+      email: 'chisom.nkoli@edu',
+      phone: '+234 803 333 4444',
+      specialization: 'Geotechnical Engineering',
+      officeLocation: 'Engineering Block, Room 401',
+      status: 'active',
+      yearsOfExperience: 20,
+    },
+  ]
 
-  const fetchLecturers = async () => {
-    try {
-      const res = await api.get('/admin/lecturers')
-      setLecturers(res.data.map((l) => ({ ...l, id: l._id })))
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
-    }
-  }
-
-  useEffect(() => {
-    fetchLecturers()
-  }, [])
+  const [lecturers, setLecturers] = useState(INITIAL_LECTURERS)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterPosition, setFilterPosition] = useState('all')
   const [showModal, setShowModal] = useState(false)
@@ -80,29 +102,27 @@ function AdminLecturersPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      if (selectedLecturer) {
-        await api.put('/admin/lecturers/' + selectedLecturer.id, formData)
-      } else {
-        await api.post('/admin/lecturers', formData)
+    // Backend integration point - replace this with API call
+    if (selectedLecturer) {
+      // UPDATE operation
+      setLecturers(lecturers.map((l) => (l.id === selectedLecturer.id ? { ...l, ...formData } : l)))
+    } else {
+      // CREATE operation
+      const newLecturer = {
+        id: Date.now(),
+        ...formData,
       }
-      await fetchLecturers()
-      handleCloseModal()
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
+      setLecturers([...lecturers, newLecturer])
     }
+    handleCloseModal()
   }
 
-  const handleDeleteLecturer = async (id) => {
+  const handleDeleteLecturer = (id) => {
+    // Backend integration point - replace this with API call
     if (window.confirm('Are you sure you want to remove this lecturer?')) {
-      try {
-        await api.delete('/admin/lecturers/' + id)
-        await fetchLecturers()
-      } catch (err) {
-        alert(err.response?.data?.message || 'Something went wrong')
-      }
+      setLecturers(lecturers.filter((l) => l.id !== id))
     }
   }
 

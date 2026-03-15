@@ -1,22 +1,41 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import api from '../services/api.js'
 
 function AdminStudentsPage() {
-  const [students, setStudents] = useState([])
+  const INITIAL_STUDENTS = [
+    {
+      id: 1,
+      fullName: 'Adaeze Nwachukwu',
+      matric: 'CVE/21/001',
+      level: '300',
+      email: 'adaeze.nwachukwu@student.edu',
+      phone: '+234 801 234 5678',
+      status: 'active',
+      joiningDate: '2021-09-15',
+    },
+    {
+      id: 2,
+      fullName: 'John Ibrahim',
+      matric: 'CVE/20/104',
+      level: '400',
+      email: 'john.ibrahim@student.edu',
+      phone: '+234 802 345 6789',
+      status: 'active',
+      joiningDate: '2020-09-10',
+    },
+    {
+      id: 3,
+      fullName: 'Chioma Okafor',
+      matric: 'CVE/22/045',
+      level: '200',
+      email: 'chioma.okafor@student.edu',
+      phone: '+234 703 456 7890',
+      status: 'active',
+      joiningDate: '2022-09-12',
+    },
+  ]
 
-  const fetchStudents = async () => {
-    try {
-      const res = await api.get('/admin/students')
-      setStudents(res.data.map((s) => ({ ...s, id: s._id, matric: s.matricNumber })))
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
-    }
-  }
-
-  useEffect(() => {
-    fetchStudents()
-  }, [])
+  const [students, setStudents] = useState(INITIAL_STUDENTS)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterLevel, setFilterLevel] = useState('all')
   const [showModal, setShowModal] = useState(false)
@@ -72,29 +91,28 @@ function AdminStudentsPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      if (selectedStudent) {
-        await api.put('/admin/students/' + selectedStudent.id, formData)
-      } else {
-        await api.post('/admin/students', formData)
+    // Backend integration point - replace this with API call
+    if (selectedStudent) {
+      // UPDATE operation
+      setStudents(students.map((s) => (s.id === selectedStudent.id ? { ...s, ...formData } : s)))
+    } else {
+      // CREATE operation
+      const newStudent = {
+        id: Date.now(),
+        ...formData,
+        joiningDate: new Date().toISOString().split('T')[0],
       }
-      await fetchStudents()
-      handleCloseModal()
-    } catch (err) {
-      alert(err.response?.data?.message || 'Something went wrong')
+      setStudents([...students, newStudent])
     }
+    handleCloseModal()
   }
 
-  const handleDeleteStudent = async (id) => {
+  const handleDeleteStudent = (id) => {
+    // Backend integration point - replace this with API call
     if (window.confirm('Are you sure you want to remove this student?')) {
-      try {
-        await api.delete('/admin/students/' + id)
-        await fetchStudents()
-      } catch (err) {
-        alert(err.response?.data?.message || 'Something went wrong')
-      }
+      setStudents(students.filter((s) => s.id !== id))
     }
   }
 

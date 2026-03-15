@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import DashboardLayout from './DashboardLayout.jsx'
@@ -24,16 +23,8 @@ const titlesByPath = {
 function AdminLayout() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { logout, user } = useAuth()
+  const { logout } = useAuth()
   const title = titlesByPath[location.pathname] || 'Admin Dashboard'
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login')
-    } else if (user.role !== 'admin') {
-      navigate('/student')
-    }
-  }, [user, navigate])
 
   const handleLogout = () => {
     logout()

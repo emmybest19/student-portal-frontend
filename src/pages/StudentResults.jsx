@@ -1,8 +1,87 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Table from '../components/Card.jsx'
 import { containerVariants, itemVariants, textVariants } from '../utils/animations'
-import api from '../services/api.js'
+
+// Mock data for all levels and semesters
+const MOCK_RESULTS = {
+  100: {
+    1: [
+      { courseCode: 'CVE 101', courseName: 'Engineering Graphics I', creditLoad: 2, caScore: 15, examScore: 78, grade: 'A' },
+      { courseCode: 'CVE 103', courseName: 'Mathematics I', creditLoad: 3, caScore: 18, examScore: 82, grade: 'A' },
+      { courseCode: 'CVE 105', courseName: 'Physics I', creditLoad: 3, caScore: 14, examScore: 76, grade: 'B+' },
+      { courseCode: 'CVE 107', courseName: 'Chemistry I', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 109', courseName: 'Environmental Science I', creditLoad: 2, caScore: 13, examScore: 72, grade: 'B' },
+    ],
+    2: [
+      { courseCode: 'CVE 102', courseName: 'Engineering Graphics II', creditLoad: 2, caScore: 16, examScore: 79, grade: 'A-' },
+      { courseCode: 'CVE 104', courseName: 'Mathematics II', creditLoad: 3, caScore: 14, examScore: 75, grade: 'B+' },
+      { courseCode: 'CVE 106', courseName: 'Physics II', creditLoad: 3, caScore: 18, examScore: 81, grade: 'A' },
+      { courseCode: 'CVE 108', courseName: 'Chemistry II', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 110', courseName: 'Environmental Science II', creditLoad: 2, caScore: 16, examScore: 78, grade: 'A-' },
+    ],
+  },
+  200: {
+    1: [
+      { courseCode: 'CVE 201', courseName: 'Mechanics of Materials I', creditLoad: 3, caScore: 14, examScore: 75, grade: 'B+' },
+      { courseCode: 'CVE 203', courseName: 'Surveying I', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 205', courseName: 'Hydraulics I', creditLoad: 3, caScore: 16, examScore: 79, grade: 'A-' },
+      { courseCode: 'CVE 207', courseName: 'Soil Mechanics I', creditLoad: 3, caScore: 13, examScore: 72, grade: 'B' },
+      { courseCode: 'CVE 209', courseName: 'Engineering Geology', creditLoad: 2, caScore: 18, examScore: 81, grade: 'A' },
+    ],
+    2: [
+      { courseCode: 'CVE 202', courseName: 'Mechanics of Materials II', creditLoad: 3, caScore: 18, examScore: 82, grade: 'A' },
+      { courseCode: 'CVE 204', courseName: 'Surveying II', creditLoad: 3, caScore: 14, examScore: 76, grade: 'B+' },
+      { courseCode: 'CVE 206', courseName: 'Hydraulics II', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 208', courseName: 'Soil Mechanics II', creditLoad: 3, caScore: 16, examScore: 78, grade: 'A-' },
+      { courseCode: 'CVE 210', courseName: 'Construction Methods I', creditLoad: 2, caScore: 13, examScore: 71, grade: 'B' },
+    ],
+  },
+  300: {
+    1: [
+      { courseCode: 'CVE 301', courseName: 'Structural Analysis I', creditLoad: 4, caScore: 18, examScore: 81, grade: 'A' },
+      { courseCode: 'CVE 303', courseName: 'Structural Design I', creditLoad: 3, caScore: 10, examScore: 60, grade: 'C' },
+      { courseCode: 'CVE 305', courseName: 'Water Resources Engineering I', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 307', courseName: 'Transportation Engineering I', creditLoad: 3, caScore: 16, examScore: 79, grade: 'A-' },
+      { courseCode: 'CVE 309', courseName: 'Construction Methods II', creditLoad: 2, caScore: 13, examScore: 72, grade: 'B' },
+    ],
+    2: [
+      { courseCode: 'CVE 302', courseName: 'Structural Analysis II', creditLoad: 4, caScore: 15, examScore: 76, grade: 'B+' },
+      { courseCode: 'CVE 304', courseName: 'Structural Design II', creditLoad: 3, caScore: 18, examScore: 82, grade: 'A' },
+      { courseCode: 'CVE 306', courseName: 'Water Resources Engineering II', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 308', courseName: 'Transportation Engineering II', creditLoad: 3, caScore: 15, examScore: 76, grade: 'B+' },
+      { courseCode: 'CVE 310', courseName: 'Engineering Economics', creditLoad: 2, caScore: 16, examScore: 79, grade: 'A-' },
+    ],
+  },
+  400: {
+    1: [
+      { courseCode: 'CVE 401', courseName: 'Advanced Structural Design I', creditLoad: 4, caScore: 16, examScore: 79, grade: 'A-' },
+      { courseCode: 'CVE 403', courseName: 'Foundation Engineering I', creditLoad: 3, caScore: 15, examScore: 76, grade: 'B+' },
+      { courseCode: 'CVE 405', courseName: 'Sustainable Infrastructure I', creditLoad: 3, caScore: 18, examScore: 81, grade: 'A' },
+      { courseCode: 'CVE 407', courseName: 'Project Management I', creditLoad: 3, caScore: 17, examScore: 80, grade: 'A' },
+      { courseCode: 'CVE 409', courseName: 'Research Methods', creditLoad: 2, caScore: 16, examScore: 79, grade: 'A-' },
+    ],
+    2: [
+      { courseCode: 'CVE 402', courseName: 'Advanced Structural Design II', creditLoad: 4, caScore: 18, examScore: 82, grade: 'A' },
+      { courseCode: 'CVE 404', courseName: 'Foundation Engineering II', creditLoad: 3, caScore: 16, examScore: 79, grade: 'A-' },
+      { courseCode: 'CVE 406', courseName: 'Sustainable Infrastructure II', creditLoad: 3, caScore: 15, examScore: 76, grade: 'B+' },
+      { courseCode: 'CVE 408', courseName: 'Project Management II', creditLoad: 3, caScore: 18, examScore: 81, grade: 'A' },
+      { courseCode: 'CVE 410', courseName: 'Professional Practice', creditLoad: 2, caScore: 18, examScore: 82, grade: 'A' },
+    ],
+  },
+  500: {
+    1: [
+      { courseCode: 'CVE 501', courseName: 'Thesis/Project I', creditLoad: 6, caScore: 18, examScore: 82, grade: 'A' },
+      { courseCode: 'CVE 503', courseName: 'Advanced Topics in Civil Engineering I', creditLoad: 3, caScore: 16, examScore: 79, grade: 'A-' },
+      { courseCode: 'CVE 505', courseName: 'Seminar I', creditLoad: 2, caScore: 18, examScore: 81, grade: 'A' },
+    ],
+    2: [
+      { courseCode: 'CVE 502', courseName: 'Thesis/Project II', creditLoad: 6, caScore: 18, examScore: 82, grade: 'A' },
+      { courseCode: 'CVE 504', courseName: 'Advanced Topics in Civil Engineering II', creditLoad: 3, caScore: 17, examScore: 81, grade: 'A' },
+      { courseCode: 'CVE 506', courseName: 'Seminar II', creditLoad: 2, caScore: 16, examScore: 79, grade: 'A-' },
+    ],
+  },
+}
 
 const LEVELS = ['100', '200', '300', '400', '500']
 const SEMESTERS = [
@@ -28,25 +107,8 @@ const buttonVariants = {
 function StudentResultsPage() {
   const [selectedLevel, setSelectedLevel] = useState('100')
   const [selectedSemester, setSelectedSemester] = useState(1)
-  const [allResults, setAllResults] = useState({})
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    api.get('/student/results')
-      .then((res) => {
-        const transformed = {}
-        res.data.forEach((item) => {
-          const levelKey = String(item.level)
-          if (!transformed[levelKey]) transformed[levelKey] = {}
-          transformed[levelKey][item.semester] = item.courses
-        })
-        setAllResults(transformed)
-      })
-      .catch((err) => console.error('Failed to fetch results:', err))
-      .finally(() => setLoading(false))
-  }, [])
-
-  const currentResults = allResults[selectedLevel]?.[selectedSemester] || []
+  const currentResults = MOCK_RESULTS[selectedLevel]?.[selectedSemester] || []
 
   // Grade points mapping
   const gradePoints = {
@@ -78,9 +140,9 @@ function StudentResultsPage() {
     let totalPoints = 0
     let totalCredits = 0
 
-    Object.keys(allResults).forEach((level) => {
-      Object.keys(allResults[level]).forEach((semester) => {
-        const results = allResults[level][semester]
+    Object.keys(MOCK_RESULTS).forEach((level) => {
+      Object.keys(MOCK_RESULTS[level]).forEach((semester) => {
+        const results = MOCK_RESULTS[level][semester]
         results.forEach((result) => {
           totalPoints += (gradePoints[result.grade] || 0) * result.creditLoad
           totalCredits += result.creditLoad
@@ -98,9 +160,9 @@ function StudentResultsPage() {
   // Calculate total credits across all semesters
   const calculateTotalAllCredits = () => {
     let total = 0
-    Object.keys(allResults).forEach((level) => {
-      Object.keys(allResults[level]).forEach((semester) => {
-        const results = allResults[level][semester]
+    Object.keys(MOCK_RESULTS).forEach((level) => {
+      Object.keys(MOCK_RESULTS[level]).forEach((semester) => {
+        const results = MOCK_RESULTS[level][semester]
         total += results.reduce((sum, result) => sum + result.creditLoad, 0)
       })
     })

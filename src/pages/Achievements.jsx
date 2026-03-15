@@ -1,23 +1,21 @@
 import { motion } from 'framer-motion'
-import { useState, useEffect } from 'react'
 import Card from '../components/Card.jsx'
-import api from '../services/api.js'
 import { containerVariants, itemVariants, textVariants } from '../utils/animations'
 
+const MOCK_ACHIEVEMENTS = [
+  {
+    id: 1,
+    title: 'Best Engineering Department 2025',
+    summary: 'Awarded by the Faculty of Engineering for outstanding performance.',
+  },
+  {
+    id: 2,
+    title: 'National Concrete Canoe Competition',
+    summary: 'Students emerged 2nd place at a national level competition.',
+  },
+]
+
 function AchievementsPage() {
-  const [achievements, setAchievements] = useState([])
-
-  useEffect(() => {
-    api.get('/public/achievements').then((res) => {
-      const mapped = res.data.map((a) => ({
-        id: a._id,
-        title: a.title,
-        summary: a.description,
-      }))
-      setAchievements(mapped)
-    })
-  }, [])
-
   return (
     <motion.div
       className="mx-auto flex flex-col items-center max-w-6xl px-4 py-10"
@@ -48,7 +46,7 @@ function AchievementsPage() {
         whileInView="visible"
         viewport={{ once: true }}
       >
-        {achievements.map((item) => (
+        {MOCK_ACHIEVEMENTS.map((item) => (
           <motion.div key={item.id} variants={itemVariants}>
             <Card animate={true}>
               <div className="p-5">

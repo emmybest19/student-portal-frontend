@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import api from '../services/api.js'
 import AuthLayout from '../layouts/AuthLayout.jsx'
 
 const inputVariants = {
@@ -84,11 +83,31 @@ function RegisterPage() {
     setIsLoading(true)
 
     try {
-      await api.post('/auth/register', formData)
+      // Check if email already exists in localStorage
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]')
+      const emailExists = existingUsers.some((user) => user.email === formData.email)
+      
+      if (emailExists) {
+        setError('This email is already registered. Please sign in or use a different email.')
+        setIsLoading(false)
+        return
+      }
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Save new user to localStorage
+      const newUser = {
+        id: Date.now().toString(),
+        ...formData,
+      }
+      
+      existingUsers.push(newUser)
+      localStorage.setItem('users', JSON.stringify(existingUsers))
 
       // Show success message
       setSuccessMessage('✅ Registration successful! Redirecting to login...')
-
+      
       // Clear form
       setFormData({
         fullName: '',
@@ -102,8 +121,30 @@ function RegisterPage() {
       setTimeout(() => {
         navigate('/login')
       }, 2000)
+
+      // Uncomment and use this code when backend is ready:
+      /*
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        setError(data.message || 'Registration failed')
+        return
+      }
+
+      setSuccessMessage('✅ Registration successful! Redirecting to login...')
+      setTimeout(() => {
+        navigate('/login')
+      }, 2000)
+      */
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during registration')
+      setError(err.message || 'An error occurred during registration')
     } finally {
       setIsLoading(false)
     }

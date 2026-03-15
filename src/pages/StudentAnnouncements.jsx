@@ -1,32 +1,65 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import api from '../services/api.js'
 
 function StudentAnnouncementsPage() {
-  const [announcements, setAnnouncements] = useState([])
-  const [loading, setLoading] = useState(true)
+  const MOCK_ANNOUNCEMENTS = [
+    {
+      id: 1,
+      title: 'Test Schedule',
+      body: 'Mid-semester tests will hold from 4th–8th April. Please ensure you attend all tests scheduled in your timetable.',
+      date: 'March 10, 2026',
+      read: false,
+      priority: 'high',
+      category: 'Academic',
+    },
+    {
+      id: 2,
+      title: 'Library Closure Notice',
+      body: 'The main library will be closed for maintenance on March 15-17, 2026. The annex library will remain open during these hours.',
+      date: 'March 9, 2026',
+      read: true,
+      priority: 'medium',
+      category: 'Campus',
+    },
+    {
+      id: 3,
+      title: 'Examination Registration Reminder',
+      body: 'The registration window for end-of-semester examinations closes on March 20, 2026. Ensure you register before the deadline.',
+      date: 'March 8, 2026',
+      read: false,
+      priority: 'high',
+      category: 'Academic',
+    },
+    {
+      id: 4,
+      title: 'Course Materials Available',
+      body: 'All lecture notes and supplementary materials for second semester have been uploaded to the course portal.',
+      date: 'March 5, 2026',
+      read: true,
+      priority: 'low',
+      category: 'Academics',
+    },
+    {
+      id: 5,
+      title: 'Student Awards Program',
+      body: 'Nominations are now open for the annual student excellence awards. Deadline for submissions is March 25, 2026.',
+      date: 'March 1, 2026',
+      read: false,
+      priority: 'medium',
+      category: 'Opportunities',
+    },
+    {
+      id: 6,
+      title: 'Campus Maintenance Work',
+      body: 'Drainage maintenance will be conducted around the engineering complex on weekends. Please avoid the area during work hours.',
+      date: 'February 28, 2026',
+      read: true,
+      priority: 'low',
+      category: 'Campus',
+    },
+  ]
 
-  useEffect(() => {
-    api.get('/student/announcements')
-      .then((res) => {
-        const mapped = res.data.map((a) => ({
-          id: a._id,
-          title: a.title,
-          body: a.body,
-          date: new Date(a.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-          read: false,
-          priority: a.priority,
-          category: a.category,
-        }))
-        setAnnouncements(mapped)
-      })
-      .catch((err) => console.error('Failed to fetch announcements:', err))
-      .finally(() => setLoading(false))
-  }, [])
+  const [announcements, setAnnouncements] = useState(MOCK_ANNOUNCEMENTS)
   const [filter, setFilter] = useState('all')
 
   const filteredAnnouncements =
