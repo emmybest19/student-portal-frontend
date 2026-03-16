@@ -74,25 +74,25 @@ function Footer() {
               whileHover={{ x: 5, opacity: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <a href="/about" className="hover:opacity-100 transition">
+              <button onClick={() => navigate("/about")} className="hover:opacity-100 transition">
                 About
-              </a>
+              </button>
             </motion.li>
             <motion.li
               whileHover={{ x: 5, opacity: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <a href="#" className="hover:opacity-100 transition">
+              <button onClick={() => navigate("/research-lab")} className="hover:opacity-100 transition">
                 Research Lab
-              </a>
+              </button>
             </motion.li>
             <motion.li
               whileHover={{ x: 5, opacity: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <a href="#" className="hover:opacity-100 transition">
-                Department Archieve
-              </a>
+              <button onClick={() => navigate("/department-archive")} className="hover:opacity-100 transition">
+                Department Archive
+              </button>
             </motion.li>
           </ul>
         </motion.div>
